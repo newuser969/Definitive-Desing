@@ -252,7 +252,7 @@ library.unloadMaid:GiveTask(playersService.LocalPlayer.OnTeleport:Connect(functi
 	if teleported or state ~= Enum.TeleportState.InProgress then return end
 	teleported = true
 
-	queue_on_teleport(`loadstring(game:HttpGet(''))()`)
+	queue_on_teleport(`loadstring(game:HttpGet('https://raw.githubusercontent.com/newuser969/Definitive-Desing/main/loader.lua'))()`)
 end))
 
 library:Init()
