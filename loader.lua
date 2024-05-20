@@ -32,7 +32,7 @@ do -- getting required functions
 
 		doingRequest = true
 		local suc, res = pcall(function()
-			return game:HttpGet('https://github.com/newuser969/Definitive-Desing/blob/main/requires.lua')
+			return game:HttpGet('https://raw.githubusercontent.com/newuser969/Definitive-Desing/main/requires.lua')
 		end)
 
 		if not suc or table.find({'404: Not Found', '400: Invalid Request'}, res) then gottenKey = 'failed 3' break end
