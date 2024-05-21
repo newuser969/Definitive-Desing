@@ -3297,6 +3297,7 @@ do -- // Load
 		local settingsTab = library:AddTab('Settings', 100)
 		local settingsColumn = settingsTab:AddColumn()
 		local settingsLib = settingsColumn:AddSection('Library Section')
+		local settingsMenu = settingsColumn:AddSection('Menu')
 		local settingsColumn1 = settingsTab:AddColumn()
 		local configSection = settingsColumn1:AddSection('Config')
 		local extraSection = settingsColumn1:AddSection('Utilities Section')
@@ -3346,14 +3347,14 @@ do -- // Load
 			nomouse = true,
 			callback = library.options.unloadMenu.callback
 		})
-		settingsLib:AddBind({
+		settingsMenu:AddBind({
 			text = 'Open / Close',
 			flag = 'UI Toggle',
 			nomouse = true,
 			key = Enum.KeyCode.RightControl,
 			callback = function() library:Close() end
 		})
-		settingsLib:AddColor({
+		settingsMenu:AddColor({
 			text = 'Accent Color',
 			flag = 'Menu Accent Color',
 			color = Color3.fromRGB(225, 141, 255),
@@ -3367,7 +3368,7 @@ do -- // Load
 				end
 			end
 		})
-		settingsLib:AddToggle({
+		settingsMenu:AddToggle({
 			text = 'Rainbow Accent Color',
 			flag = 'Rainbow Menu Accent Color',
 			callback = function(t)
@@ -3383,7 +3384,7 @@ do -- // Load
 				end)
 			end
 		})
-		settingsLib:AddList({
+		settingsMenu:AddList({
 			text = 'Background',
 			flag = 'UI Background',
 			values = {'Floral', 'Flowers', 'Circles', 'Hearts'},
@@ -3403,7 +3404,7 @@ do -- // Load
 				library.main.ImageTransparency = 1 - Value
 			end
 		})
-		settingsLib:AddSlider({
+		settingsMenu:AddSlider({
 			text = 'Tile Size',
 			value = 90,
 			min = 50,
