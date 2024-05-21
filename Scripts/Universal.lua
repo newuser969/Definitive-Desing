@@ -65,7 +65,7 @@ local maid = requireScript('maid.lua').new()
 local util = requireScript('utils.lua')
 local notif = requireScript('notifs.lua')
 
-local espLibrary = requireScript('utils/helpers/esp.lua')
+local espLibrary = requireScript('Enviroment/Utilities/ESP.lua')
 
 local debug = library.flags.debugMode
 library.OnFlagChanged:Connect(function(data)
