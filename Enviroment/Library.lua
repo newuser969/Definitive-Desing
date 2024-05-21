@@ -3296,8 +3296,9 @@ do -- // Load
 
 		local settingsTab = library:AddTab('Settings', 100)
 		local settingsColumn = settingsTab:AddColumn()
+		local settingsLib = settingsColumn:AddSection('Library Section')
 		local settingsColumn1 = settingsTab:AddColumn()
-		local configSection = settingsColumn1:AddSection('Configs')
+		local configSection = settingsColumn1:AddSection('Config')
 		local extraSection = settingsColumn1:AddSection('Extra')
 		local detectionSection = settingsColumn:AddSection('Detection Protection')
 
@@ -3324,7 +3325,7 @@ do -- // Load
 				table.insert(scaleTypes, scaleType.Name)
 			end
 
-			settingsTab:AddList({
+			settingsLib:AddList({
 				text = 'Background Scale Type',
 				values = scaleTypes,
 				callback = function()
@@ -3333,14 +3334,14 @@ do -- // Load
 			})
 		end
 
-		settingsTab:AddButton({
+		settingsLib:AddButton({
 			text = 'Unload Menu',
 			nomouse = true,
 			callback = function()
 				library:Unload()
 			end
 		})
-		settingsTab:AddBind({
+		settingsLib:AddBind({
 			text = 'Unload Key',
 			nomouse = true,
 			callback = library.options.unloadMenu.callback
