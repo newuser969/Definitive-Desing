@@ -84,7 +84,7 @@ do -- game scan & setup
 	if not hasCustom then
 		print('[loader] loading custom script for universal')
 		library.title = 'Definite Desing - Universal'
-		--requireScript('scripts/universal.lua')
+		requireScript('Scripts/Universal.lua')
 	end
 	print('[loader] passed section 5')
 end
