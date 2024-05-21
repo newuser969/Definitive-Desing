@@ -3294,7 +3294,7 @@ do -- // Load
 			maid:Destroy()
 		end)
 		
-		local settingsTab = library:AddTab('Settings', 100)
+				local settingsTab = library:AddTab('Settings', 100)
 		local settingsColumn = settingsTab:AddColumn()
 		local settingsColumn1 = settingsTab:AddColumn()
 		local settingsMain = settingsColumn:AddSection('Main')
@@ -3609,6 +3609,12 @@ do -- // Load
 				until false
 			end
 		})
+		extraSection:AddButton({
+			text = 'Copy javascript invite',
+			callback = function()
+				setclipboard(`Roblox.GameLauncher.joinGameInstance('{game.PlaceId}', '{game.JobId}')`)
+			end
+		})
 
 		extraSection:AddDivider()
 		extraSection:AddToggle({
@@ -3642,7 +3648,8 @@ do -- // Load
 			callback = function(t) return toggleDetectionBypass('preloadAsync', t) end
 		})
 
-		--if math.random(1, 100) >= 60 then joinDiscord('') end
+		-- // blame berry for this
+		if math.random(1, 100) >= 60 then joinDiscord('sRz4eEs9Qk') end
 	end
 end
 
