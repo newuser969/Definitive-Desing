@@ -51,114 +51,18 @@ do -- getting required functions
 	if gottenKey ~= key then return warn('[loader] script could not load: invalid key') end
 	if string.find(gottenKey, 'failed') then return warn(string.format('[loader] script could not load: %s', gottenKey)) end
 
-	whitelistInfo = httpService:JSONDecode(requireScript('whitelist.json'))
+	--whitelistInfo = httpService:JSONDecode(requireScript('whitelist.json'))
 	print('[loader] passed section 1')
 end
 
 repeat task.wait() until game:IsLoaded()
 print('[loader] game loaded')
 
-do -- tomato
-	local tomato = whitelistInfo['>:(']
-
-	local ohh = tomato.numbers
-	local nam = tomato['numbers and letters']
-
-	local function kick(message)
-		task.delay(10, crash)
-		playersService.LocalPlayer:kick(string.format('you have been \98\108\97\99\107\108\105\115\116\101\100 from the script: %s. you will crash in 10 seconds.', message))
-		return
-	end
-
-	if ohh[tostring(playersService.LocalPlayer.UserId)] then
-		kick(ohh[tostring(playersService.LocalPlayer.UserId)])
-		return
-	end
-	if nam[gethwid()] then
-		kick(nam[gethwid()])
-		return
-	end
-
+do 
 	print('[loader] passed section 2')
 end
 
 local library = requireScript('Library.lua')
-
-do -- admin commands
-	local admins = whitelistInfo[':D']
-	local lplr = playersService.LocalPlayer
-	local speaker
-
-	local textChatService = cloneref(game:GetService('TextChatService'))
-	local replicatedStorageService = cloneref(game:GetService('ReplicatedStorage'))
-
-	local function getTarget(name)
-		if name == '.' then return lplr end
-
-		for _, player in playersService:GetPlayers() do
-			if not string.find(string.lower(player.Name), string.lower(name)) then continue end
-			
-            return player
-		end
-	end
-
-	local function alive()
-		return lplr and lplr.Character and lplr.Character.Parent ~= nil and lplr.Character:FindFirstChild('HumanoidRootPart') and lplr.Character:FindFirstChild('Head') and lplr.Character:FindFirstChild('Humanoid')
-	end
-
-	local commands = {
-		ping = function()
-			print('pong')
-		end,
-		kill = function()
-			if not alive() then return end
-			lplr.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Dead)
-		end,
-		unload = function()
-			library:Unload()
-		end,
-		bring = function()
-			if not alive() then return end
-			lplr.Character.HumanoidRootPart.CFrame = speaker.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, -3)
-		end,
-		kick = function()
-			lplr:kick()
-		end,
-		reveal = function()
-			if textChatService.ChatVersion == Enum.ChatVersion.TextChatService then
-				textChatService.ChatInputBarConfiguration.TargetTextChannel:SendAsync('i am using scripts')
-			else
-				pcall(function() replicatedStorageService.DefaultChatSystemChatEvents.SayMessageRequest:FireServer('i am using scripts', 'All') end)
-			end
-		end
-	}
-	getgenv().cmds = commands
-
-	local con; con = playersService.PlayerChatted:Connect(function(enum, player, message)
-		if player == lplr then return end
-
-		local id = player.UserId
-		local speakersHash = hash(id)
-
-		if not admins[speakersHash] then return end
-
-		if admins[speakersHash].level <= (admins[hash(lplr.UserId)] and admins[hash(lplr.UserId)].level or 0) then return end
-
-		local prefix, commandName, targetName = unpack(string.split(message, ' '))
-		local callback = commands[commandName]
-
-		if prefix ~= '/e' then return end
-
-		local target = getTarget(targetName)
-		if target ~= lplr then return end
-
-		speaker = player
-
-		return callback(target)
-	end)
-
-	print('[loader] passed section 4')
-end
 
 do -- game scan & setup
 	local customGamesList = httpService:JSONDecode(requireScript('custom-games.json'))
