@@ -5,9 +5,9 @@ local shortenedScripts = {
 	['bind-viewer.lua'] = 'Enviroment/keyBindVisualizer.lua',
 	['notifs.lua'] = 'Enviroment/toastNotifs.lua',
 
-	['utils.lua'] = 'Utilities/utils.lua',
-	['maid.lua'] = 'Utilities/maid.lua',
-	['signal.lua'] = 'Utilities/signal.lua'
+	['utils.lua'] = 'Enviroment/Utilities/utils.lua',
+	['maid.lua'] = 'Enviroment/Utilities/maid.lua',
+	['signal.lua'] = 'Enviroment/Utilities/signal.lua'
 }
 
 local constants = {
