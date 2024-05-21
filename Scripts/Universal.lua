@@ -61,9 +61,9 @@ end))
 
 local mouse = lplr:GetMouse()
 
-local maid = requireScript('maid.lua').new()
-local util = requireScript('utils.lua')
-local notif = requireScript('notifs.lua')
+local maid = requireScript('Enviroment/Utilities/maid.lua').new()
+local util = requireScript('Enviroment/Utilities/utils.lua')
+local notif = requireScript('Enviroment/toastNotifs.lua')
 
 local espLibrary = requireScript('Enviroment/Utilities/ESP.lua')
 
