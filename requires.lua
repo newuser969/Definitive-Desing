@@ -12,7 +12,7 @@ local shortenedScripts = {
 
 local constants = {
 	timeout = 15,
-	githubPath = 'https://github.com/newuser969/Definitive-Desing/tree/main/',
+	githubPath = 'https://raw.githubusercontent.com/newuser969/Definitive-Desing/main/',
 	filepath = 'Definitive Desing/',
 	errors = {'404: Not Found', '400: Invalid Request'},
 	debugIDs = {'f83c9d5e172bdb30576027119148d3bc62027d21c72cefc3c74c9180f59cb7e8'}
