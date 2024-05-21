@@ -3324,7 +3324,7 @@ do -- // Load
 				table.insert(scaleTypes, scaleType.Name)
 			end
 
-			settingsMain:AddList({
+			settingsTab:AddList({
 				text = 'Background Scale Type',
 				values = scaleTypes,
 				callback = function()
@@ -3333,14 +3333,14 @@ do -- // Load
 			})
 		end
 
-		settingsMain:AddButton({
+		settingsTab:AddButton({
 			text = 'Unload Menu',
 			nomouse = true,
 			callback = function()
 				library:Unload()
 			end
 		})
-		settingsMain:AddBind({
+		settingsTab:AddBind({
 			text = 'Unload Key',
 			nomouse = true,
 			callback = library.options.unloadMenu.callback
