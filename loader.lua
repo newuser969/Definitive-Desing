@@ -62,7 +62,7 @@ do
 	print('[loader] passed section 2')
 end
 
-local library = requireScript('Library.lua')
+local library = requireScript('library.lua')
 
 do -- game scan & setup
 	local customGamesList = httpService:JSONDecode(requireScript('custom-games.json'))
