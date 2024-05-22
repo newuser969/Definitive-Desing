@@ -1,5 +1,5 @@
-# Definitive-Desing
-Legend scripts will upload here.
+# Definitive Desing
+Definitive Scripts Will Upload Here.
 
 # Supported Games
 -  Booga Booga Reborn
