@@ -2,7 +2,7 @@
 Legend scripts will upload here.
 
 # Supported Games
-Booga Booga Reborn
+-Booga Booga Reborn
 
 # Loader
 ```lua
