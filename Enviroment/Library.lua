@@ -74,7 +74,7 @@ if gethui then
 		end
 	end
 else
-	for _, Interface in ipairs(game.CoreGui:GetChildren()) do
+	for _, Interface in ipairs(CoreGui:GetChildren()) do
 		if Interface.Name == Orion.Name and Interface ~= Orion then
 			Interface:Destroy()
 		end
