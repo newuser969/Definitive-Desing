@@ -1,8 +1,9 @@
 # Definitive Desing
-Definitive Scripts Will Upload Here.
+Definitive scripts will upload here.
 
 # Supported Games
 -  Booga Booga Reborn
+-  Catastrophia
 
 # Loader
 ```lua
