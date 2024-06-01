@@ -133,7 +133,6 @@ local function MakeDraggable(DragPoint, Main)
 		AddConnection(UserInputService.InputChanged, function(Input)
 			if Input == DragInput and Dragging then
 				local Delta = Input.Position - MousePos
-				--TweenService:Create(Main, TweenInfo.new(0.05, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Position  = UDim2.new(FramePos.X.Scale,FramePos.X.Offset + Delta.X, FramePos.Y.Scale, FramePos.Y.Offset + Delta.Y)}):Play()
 				Main.Position  = UDim2.new(FramePos.X.Scale,FramePos.X.Offset + Delta.X, FramePos.Y.Scale, FramePos.Y.Offset + Delta.Y)
 			end
 		end)
@@ -618,13 +617,6 @@ function OrionLib:MakeWindow(WindowConfig)
 		Size = UDim2.new(0, 615, 0, 344),
 		ClipsDescendants = true
 	}), {
-		--SetProps(MakeElement("Image", "rbxassetid://3523728077"), {
-		--	AnchorPoint = Vector2.new(0.5, 0.5),
-		--	Position = UDim2.new(0.5, 0, 0.5, 0),
-		--	Size = UDim2.new(1, 80, 1, 320),
-		--	ImageColor3 = Color3.fromRGB(33, 33, 33),
-		--	ImageTransparency = 0.7
-		--}),
 		SetChildren(SetProps(MakeElement("TFrame"), {
 			Size = UDim2.new(1, 0, 0, 50),
 			Name = "TopBar"
@@ -1136,12 +1128,21 @@ function OrionLib:MakeWindow(WindowConfig)
 				DropdownConfig = DropdownConfig or {}
 				DropdownConfig.Name = DropdownConfig.Name or "Dropdown"
 				DropdownConfig.Options = DropdownConfig.Options or {}
-				DropdownConfig.Default = DropdownConfig.Default or ""
+				DropdownConfig.Multi = DropdownConfig.Multi or false
+				DropdownConfig.Default = DropdownConfig.Default or (DropdownConfig.Multi and {} or "")
 				DropdownConfig.Callback = DropdownConfig.Callback or function() end
 				DropdownConfig.Flag = DropdownConfig.Flag or nil
 				DropdownConfig.Save = DropdownConfig.Save or false
+				
+				local Dropdown = {
+					Value = DropdownConfig.Default, 
+					Options = DropdownConfig.Options, 
+					Buttons = {}, 
+					Toggled = false, 
+					Type = "Dropdown", 
+					Save = DropdownConfig.Save
+				}
 
-				local Dropdown = {Value = DropdownConfig.Default, Options = DropdownConfig.Options, Buttons = {}, Toggled = false, Type = "Dropdown", Save = DropdownConfig.Save}
 				local MaxElements = 5
 
 				if not table.find(Dropdown.Options, Dropdown.Value) then
@@ -1247,7 +1248,23 @@ function OrionLib:MakeWindow(WindowConfig)
 				end  
 
 				function Dropdown:Set(Value)
-					if not table.find(Dropdown.Options, Value) then
+					if DropdownConfig.Multi then
+						local Index = table.find(Dropdown.Value, Value)
+						if Index then
+							table.remove(Dropdown.Value, Index)
+						else
+							table.insert(Dropdown.Value, Value)
+						end
+				
+						local SelectedText = table.concat(Dropdown.Value, ", ")
+						DropdownFrame.F.Selected.Text = #Dropdown.Value > 0 and SelectedText or "..."
+				
+						for _, v in pairs(Dropdown.Buttons) do
+							local Selected = table.find(Dropdown.Value, v.Title.Text)
+							TweenService:Create(v, TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundTransparency = Selected and 0 or 1}):Play()
+							TweenService:Create(v.Title, TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TextTransparency = Selected and 0 or 0.4}):Play()
+						end
+					elseif not table.find(Dropdown.Options, Value) then
 						Dropdown.Value = "..."
 						DropdownFrame.F.Selected.Text = Dropdown.Value
 						for _, v in pairs(Dropdown.Buttons) do
@@ -1332,7 +1349,6 @@ function OrionLib:MakeWindow(WindowConfig)
 				}), "Second")
 
 				AddConnection(BindBox.Value:GetPropertyChangedSignal("Text"), function()
-					--BindBox.Size = UDim2.new(0, BindBox.Value.TextBounds.X + 16, 0, 24)
 					TweenService:Create(BindBox, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, BindBox.Value.TextBounds.X + 16, 0, 24)}):Play()
 				end)
 
@@ -1458,7 +1474,6 @@ function OrionLib:MakeWindow(WindowConfig)
 				}), "Second")
 
 				AddConnection(TextboxActual:GetPropertyChangedSignal("Text"), function()
-					--TextContainer.Size = UDim2.new(0, TextboxActual.TextBounds.X + 16, 0, 24)
 					TweenService:Create(TextContainer, TweenInfo.new(0.45, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, TextboxActual.TextBounds.X + 16, 0, 24)}):Play()
 				end)
 
