@@ -1247,22 +1247,33 @@ function OrionLib:MakeWindow(WindowConfig)
 					AddOptions(Dropdown.Options)
 				end  
 
+				if not table.find then
+					function table.find(tbl, value)
+						for index, val in ipairs(tbl) do
+							if val == value then
+								return index
+							end
+						end
+						return nil
+					end
+				end
+
 				function Dropdown:Set(Value)
 					if DropdownConfig.Multi then
 						if type(Dropdown.Value) ~= "table" then
 							Dropdown.Value = {}
 						end
-				
+					
 						local Index = table.find(Dropdown.Value, Value)
 						if Index then
 							table.remove(Dropdown.Value, Index)
 						else
 							table.insert(Dropdown.Value, Value)
 						end
-				
+					
 						local SelectedText = table.concat(Dropdown.Value, ", ")
 						DropdownFrame.F.Selected.Text = #Dropdown.Value > 0 and SelectedText or "..."
-				
+					
 						for _, v in pairs(Dropdown.Buttons) do
 							local Selected = table.find(Dropdown.Value, v.Title.Text)
 							TweenService:Create(v, TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundTransparency = Selected and 0 or 1}):Play()
@@ -1272,7 +1283,7 @@ function OrionLib:MakeWindow(WindowConfig)
 						if type(Dropdown.Value) ~= "string" then
 							Dropdown.Value = "..."
 						end
-				
+					
 						if not table.find(Dropdown.Options, Value) then
 							Dropdown.Value = "..."
 							DropdownFrame.F.Selected.Text = Dropdown.Value
@@ -1282,14 +1293,15 @@ function OrionLib:MakeWindow(WindowConfig)
 							end    
 							return
 						end
-				
+					
 						Dropdown.Value = Value
 						DropdownFrame.F.Selected.Text = Dropdown.Value
-				
+					
 						for _, v in pairs(Dropdown.Buttons) do
 							TweenService:Create(v, TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundTransparency = 1}):Play()
 							TweenService:Create(v.Title, TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TextTransparency = 0.4}):Play()
 						end    
+
 						if Dropdown.Buttons[Value] then
 							TweenService:Create(Dropdown.Buttons[Value], TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundTransparency = 0}):Play()
 							TweenService:Create(Dropdown.Buttons[Value].Title, TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TextTransparency = 0}):Play()
