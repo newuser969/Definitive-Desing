@@ -1245,17 +1245,6 @@ function OrionLib:MakeWindow(WindowConfig)
 					end
 					Dropdown.Options = Options
 					AddOptions(Dropdown.Options)
-				end  
-
-				if not table.find then
-					function table.find(tbl, value)
-						for index, val in ipairs(tbl) do
-							if val == value then
-								return index
-							end
-						end
-						return nil
-					end
 				end
 
 				function Dropdown:Set(Value)
