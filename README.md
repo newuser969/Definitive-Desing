@@ -4,6 +4,7 @@ Definitive scripts will upload here.
 # Supported Games
 -  Booga Booga Reborn
 -  Catastrophia
+-  South Bronx: The Trenches
 
 # Loader
 ```lua
