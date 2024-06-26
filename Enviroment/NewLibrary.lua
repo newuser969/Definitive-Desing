@@ -5,7 +5,7 @@ local mouse = game.Players.LocalPlayer:GetMouse()
 local TS = cloneref(game:GetService("TweenService"))
 local RS = cloneref(game:GetService("RunService"))
 local UIS = cloneref(game:GetService("UserInputService"))
-local Keys = loadstring(game:HttpGet("https://raw.githubusercontent.com/joeengo/roblox/main/AlphanumericKeys.lua"))()
+local Keys = loadstring(game:HttpGet("https://raw.githubusercontent.com/newuser969/Definitive-Desing/main/Enviroment/Utilities/Keybinds.lua"))()
 local rainbowvalue = 0.01
 
 -- Themes
