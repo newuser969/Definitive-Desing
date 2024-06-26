@@ -699,7 +699,7 @@ function Kavo.CreateLib(kavName, themeList)
                 local btn = buttonElement
                 local sample = Sample
 
-				if not CoreGui:FindFirstChild("Show") then
+				if not core:FindFirstChild("Show") then
 					local ScreenGui = Instance.new("ScreenGui", CoreGui)
 					ScreenGui.Name = "Show"
 					local QuickCapture = Instance.new("TextButton", ScreenGui)
