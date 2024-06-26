@@ -141,6 +141,12 @@ end)
 
 local LibName = tostring(math.random(1, 100)) .. tostring(math.random(1, 50)) .. tostring(math.random(1, 100))
 
+for i,v in next, core:GetChildren() do
+	if v:IsA("ScreenGui") and v.Name == LibName then
+		v:Destroy()
+	end
+end
+
 function Kavo:ToggleUI(init)
     if init then 
         if core[LibName].Enabled then
@@ -693,6 +699,32 @@ function Kavo.CreateLib(kavName, themeList)
                 local btn = buttonElement
                 local sample = Sample
 
+				if not CoreGui:FindFirstChild("Show") then
+					local ScreenGui = Instance.new("ScreenGui", CoreGui)
+					ScreenGui.Name = "Show"
+					local QuickCapture = Instance.new("TextButton", ScreenGui)
+					QuickCapture.Name = "UI"
+					QuickCapture.BackgroundColor3 = Color3.fromRGB(85, 0, 255)
+					QuickCapture.BackgroundTransparency = 0.14
+					QuickCapture.Position = UDim2.new(0.465, 0, 0, 40)
+					QuickCapture.Size = UDim2.new(0, 150, 0, 33)
+					QuickCapture.Font = Enum.Font.SourceSansBold
+					QuickCapture.Text = "O/C"
+					QuickCapture.TextColor3 = Color3.fromRGB(255, 0, 0)
+					QuickCapture.TextSize = 20.000
+					QuickCapture.Style = Enum.ButtonStyle.RobloxButtonDefault
+					QuickCapture.TextWrapped = true
+					QuickCapture.Draggable = true
+					
+					QuickCapture.MouseButton1Click:Connect(function()
+						if sample.Visible == false then
+							sample.Visible = true
+						else
+							sample.Visible = false
+						end
+					end)
+				end
+
                 btn.MouseButton1Click:Connect(function()
                     if not focusing then
                         callback()
@@ -712,7 +744,7 @@ function Kavo.CreateLib(kavName, themeList)
                             c.ImageTransparency = c.ImageTransparency + 0.05
                             wait(len / 12)
                         end
-                        c:Destroy()
+                        c.Visible = false
                     else
                         for i, v in next, infoContainer:GetChildren() do
                             Utility:TweenObject(v, {
