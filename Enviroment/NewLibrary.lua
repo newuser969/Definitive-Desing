@@ -328,6 +328,32 @@ function Kavo.CreateLib(kavName, themeList)
     infoContainer.Position = UDim2.new(0.299047619, 0, 0.874213815, 0)
     infoContainer.Size = UDim2.new(0, 368, 0, 33)
 
+	if not core:FindFirstChild("Show") then
+		local ScreenGui = Instance.new("ScreenGui", core)
+		ScreenGui.Name = "Show"
+		local QuickCapture = Instance.new("TextButton", ScreenGui)
+		QuickCapture.Name = "UI"
+		QuickCapture.BackgroundColor3 = Color3.fromRGB(85, 0, 255)
+		QuickCapture.BackgroundTransparency = 0.14
+		QuickCapture.Position = UDim2.new(0.465, 0, 0, 40)
+		QuickCapture.Size = UDim2.new(0, 100, 0, 33)
+		QuickCapture.Font = Enum.Font.SourceSansBold
+		QuickCapture.Text = "O/C"
+		QuickCapture.TextColor3 = Color3.fromRGB(255, 0, 0)
+		QuickCapture.TextSize = 20.000
+		QuickCapture.Style = Enum.ButtonStyle.RobloxButtonDefault
+		QuickCapture.TextWrapped = true
+		QuickCapture.Draggable = true
+		
+		QuickCapture.MouseButton1Click:Connect(function()
+			if Main.Visible == false then
+				Main.Visible = true
+			else
+				Main.Visible = false
+			end
+		end)
+	end
+
     coroutine.wrap(function()
         while wait() do
             Main.BackgroundColor3 = themeList.Background
@@ -699,32 +725,6 @@ function Kavo.CreateLib(kavName, themeList)
                 local btn = buttonElement
                 local sample = Sample
 
-				if not core:FindFirstChild("Show") then
-					local ScreenGui = Instance.new("ScreenGui", core)
-					ScreenGui.Name = "Show"
-					local QuickCapture = Instance.new("TextButton", ScreenGui)
-					QuickCapture.Name = "UI"
-					QuickCapture.BackgroundColor3 = Color3.fromRGB(85, 0, 255)
-					QuickCapture.BackgroundTransparency = 0.14
-					QuickCapture.Position = UDim2.new(0.465, 0, 0, 40)
-					QuickCapture.Size = UDim2.new(0, 150, 0, 33)
-					QuickCapture.Font = Enum.Font.SourceSansBold
-					QuickCapture.Text = "O/C"
-					QuickCapture.TextColor3 = Color3.fromRGB(255, 0, 0)
-					QuickCapture.TextSize = 20.000
-					QuickCapture.Style = Enum.ButtonStyle.RobloxButtonDefault
-					QuickCapture.TextWrapped = true
-					QuickCapture.Draggable = true
-					
-					QuickCapture.MouseButton1Click:Connect(function()
-						if sample.Visible == false then
-							sample.Visible = true
-						else
-							sample.Visible = false
-						end
-					end)
-				end
-
                 btn.MouseButton1Click:Connect(function()
                     if not focusing then
                         callback()
@@ -744,7 +744,7 @@ function Kavo.CreateLib(kavName, themeList)
                             c.ImageTransparency = c.ImageTransparency + 0.05
                             wait(len / 12)
                         end
-                        c.Visible = false
+                        Main.Visible = false
                     else
                         for i, v in next, infoContainer:GetChildren() do
                             Utility:TweenObject(v, {
