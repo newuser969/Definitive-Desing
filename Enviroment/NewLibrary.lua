@@ -738,6 +738,7 @@ function Kavo.CreateLib(kavName, themeList)
                             c.ImageTransparency = c.ImageTransparency + 0.05
                             wait(len / 12)
                         end
+                        c:Destroy()
                     else
                         for i, v in next, infoContainer:GetChildren() do
                             Utility:TweenObject(v, {
