@@ -141,12 +141,6 @@ end)
 
 local LibName = tostring(math.random(1, 100)) .. tostring(math.random(1, 50)) .. tostring(math.random(1, 100))
 
-for i,v in next, core:GetChildren() do
-	if v:IsA("ScreenGui") and v.Name == LibName then
-		v:Destroy()
-	end
-end
-
 function Kavo:ToggleUI(init)
     if init then 
         if core[LibName].Enabled then
@@ -329,9 +323,9 @@ function Kavo.CreateLib(kavName, themeList)
     infoContainer.Size = UDim2.new(0, 368, 0, 33)
 
 	if not core:FindFirstChild("Show") then
-		local ScreenGui = Instance.new("ScreenGui", core)
-		ScreenGui.Name = "Show"
-		local QuickCapture = Instance.new("TextButton", ScreenGui)
+		local Gui = Instance.new("ScreenGui", core)
+		Gui.Name = "Show"
+		local QuickCapture = Instance.new("TextButton", Gui)
 		QuickCapture.Name = "UI"
 		QuickCapture.BackgroundColor3 = Color3.fromRGB(85, 0, 255)
 		QuickCapture.BackgroundTransparency = 0.14
@@ -346,10 +340,10 @@ function Kavo.CreateLib(kavName, themeList)
 		QuickCapture.Draggable = true
 		
 		QuickCapture.MouseButton1Click:Connect(function()
-			if Main.Visible == false then
-				Main.Visible = true
+			if ScreenGui.Visible == false then
+				ScreenGui.Visible = true
 			else
-				Main.Visible = false
+				ScreenGui.Visible = false
 			end
 		end)
 	end
@@ -744,7 +738,6 @@ function Kavo.CreateLib(kavName, themeList)
                             c.ImageTransparency = c.ImageTransparency + 0.05
                             wait(len / 12)
                         end
-                        Main.Visible = false
                     else
                         for i, v in next, infoContainer:GetChildren() do
                             Utility:TweenObject(v, {
