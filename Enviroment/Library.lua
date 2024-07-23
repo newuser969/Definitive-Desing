@@ -632,19 +632,19 @@ function OrionLib:MakeWindow(WindowConfig)
 
 	AddConnection(CloseBtn.MouseButton1Up, function()
 		MainWindow.Visible = false
-        if not IsOnMobile then
-		    UIHidden = true
-		    WindowConfig.CloseCallback()
-        end
+		UIHidden = true
+		WindowConfig.CloseCallback()
 	end)
 
-    if not IsOnMobile then
-        AddConnection(UserInputService.InputBegan, function(Input)
-            if Input.KeyCode == Enum.KeyCode.RightShift and UIHidden then
-                MainWindow.Visible = true
-            end
-        end)
-    end
+	AddConnection(UserInputService.InputBegan, function(Input)
+		if Input.KeyCode == Enum.KeyCode.RightShift then
+			MainWindow.Visible = true
+		elseif MainWindow.Visible then
+			MainWindow.Visible = false
+		elseif UIHidden then
+			MainWindow.Visible = true
+		end
+	end)
 
 	AddConnection(MinimizeBtn.MouseButton1Up, function()
 		if Minimized then
