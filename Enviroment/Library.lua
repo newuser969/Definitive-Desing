@@ -637,7 +637,7 @@ function OrionLib:MakeWindow(WindowConfig)
 	end)
 
 	AddConnection(UserInputService.InputBegan, function(Input)
-		if Input.KeyCode == Enum.KeyCode.RightShift then
+		if Input.KeyCode == Enum.KeyCode.RightShift and MainWindow.Visible == false then
 			MainWindow.Visible = true
 		elseif Input.KeyCode == Enum.KeyCode.RightShift and MainWindow.Visible then
 			MainWindow.Visible = false
