@@ -35,8 +35,8 @@ local OrionLib = {
 		}
 	},
 	SelectedTheme = "Nightmare",
-	Folder = "Configs",
-	SaveCfg = true
+	Folder = nil,
+	SaveCfg = false
 }
 
 local Icons = {}
@@ -494,7 +494,7 @@ function OrionLib:MakeWindow(WindowConfig)
 	OrionLib.Folder = WindowConfig.ConfigFolder
 
 	if WindowConfig.SaveConfig then
-		if not isfolder(WindowConfig.ConfigFolder) then
+		if isfolder and makefolder and not isfolder(WindowConfig.ConfigFolder) then
 			makefolder(WindowConfig.ConfigFolder)
 		end	
 	end
@@ -682,7 +682,7 @@ function OrionLib:MakeWindow(WindowConfig)
 	end)
 
 	AddConnection(UserInputService.InputBegan, function(Input)
-		if Input.KeyCode == Enum.KeyCode.RightShift then
+		if Input.KeyCode == Enum.KeyCode.RightShift and MainWindow.Visible == false then
 			MainWindow.Visible = true
 		elseif Input.KeyCode == Enum.KeyCode.RightShift and MainWindow.Visible then
 			MainWindow.Visible = false
