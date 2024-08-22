@@ -35,7 +35,8 @@ local OrionLib = {
 		}
 	},
 	SelectedTheme = "Nightmare",
-	Folder = nil,
+	Folder = "Configs",
+	SaveCfg = true
 }
 
 local Icons = {}
@@ -220,6 +221,39 @@ end
 
 local function UnpackColor(Color)
 	return Color3.fromRGB(Color.R, Color.G, Color.B)
+end
+
+local function LoadCfg(Config)
+	local Data = HttpService:JSONDecode(Config)
+	table.foreach(Data, function(a,b)
+		if OrionLib.Flags[a] then
+			spawn(function() 
+				if OrionLib.Flags[a].Type == "Colorpicker" then
+					OrionLib.Flags[a]:Set(UnpackColor(b))
+				else
+					OrionLib.Flags[a]:Set(b)
+				end    
+			end)
+		else
+			warn("Orion Library Config Loader - Could not find ", a ,b)
+		end
+	end)
+end
+
+local function SaveCfg(Name)
+	local Data = {}
+	for i,v in pairs(OrionLib.Flags) do
+		if v.Save then
+			if v.Type == "Colorpicker" then
+				Data[i] = PackColor(v.Value)
+			else
+				Data[i] = v.Value
+			end
+		end	
+	end
+	if writefile then
+		writefile(OrionLib.Folder .. "/" .. Name .. ".txt", tostring(HttpService:JSONEncode(Data)))
+	end
 end
 
 local WhitelistedMouse = {Enum.UserInputType.MouseButton1, Enum.UserInputType.MouseButton2,Enum.UserInputType.MouseButton3}
@@ -425,7 +459,18 @@ function OrionLib:MakeNotification(NotificationConfig)
 		wait(1.35)
 		NotificationFrame:Destroy()
 	end)
-end    
+end
+
+function OrionLib:Init()
+	if OrionLib.SaveCfg then	
+		pcall(function()
+			if isfile and readfile and isfile(OrionLib.Folder .. "/" .. game.GameId .. ".txt") then
+				LoadCfg(readfile(OrionLib.Folder .. "/" .. game.GameId .. ".txt"))
+				OrionLib:MakeNotification({Name = "Configuration",Content = "Auto-loaded configuration for the game " .. game.GameId .. ".",Time = 5})
+			end
+		end)		
+	end	
+end
 
 function OrionLib:MakeWindow(WindowConfig)
 	local FirstTab = true
@@ -637,7 +682,7 @@ function OrionLib:MakeWindow(WindowConfig)
 	end)
 
 	AddConnection(UserInputService.InputBegan, function(Input)
-		if Input.KeyCode == Enum.KeyCode.RightShift and MainWindow.Visible == false then
+		if Input.KeyCode == Enum.KeyCode.RightShift then
 			MainWindow.Visible = true
 		elseif Input.KeyCode == Enum.KeyCode.RightShift and MainWindow.Visible then
 			MainWindow.Visible = false
@@ -1384,7 +1429,7 @@ function OrionLib:MakeWindow(WindowConfig)
 					OrionLib.Flags[BindConfig.Flag] = Bind
 				end
 				return Bind
-			end  
+			end
 			function ElementFunction:AddTextbox(TextboxConfig)
 				TextboxConfig = TextboxConfig or {}
 				TextboxConfig.Name = TextboxConfig.Name or "Textbox"
