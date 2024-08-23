@@ -492,6 +492,7 @@ function OrionLib:MakeWindow(WindowConfig)
 	WindowConfig.Icon = WindowConfig.Icon or "rbxassetid://8834748103"
 	WindowConfig.IntroIcon = WindowConfig.IntroIcon or "rbxassetid://8834748103"
 	OrionLib.Folder = WindowConfig.ConfigFolder
+	OrionLib.SaveCfg = WindowConfig.SaveConfig
 
 	if WindowConfig.SaveConfig then
 		if isfolder and makefolder and not isfolder(WindowConfig.ConfigFolder) then
@@ -1006,6 +1007,7 @@ function OrionLib:MakeWindow(WindowConfig)
 
 				AddConnection(Click.MouseButton1Up, function()
 					TweenService:Create(ToggleFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(OrionLib.Themes[OrionLib.SelectedTheme].Second.R * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.G * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.B * 255 + 3)}):Play()
+					SaveCfg(game.GameId)
 					Toggle:Set(not Toggle.Value)
 				end)
 
@@ -1101,6 +1103,7 @@ function OrionLib:MakeWindow(WindowConfig)
 							SizeScale = math.clamp((Input.Position.X - SliderBar.AbsolutePosition.X) / SliderBar.AbsoluteSize.X, 0, 1)
 						end
 						Slider:Set(SliderConfig.Min + ((SliderConfig.Max - SliderConfig.Min) * SizeScale))
+						SaveCfg(game.GameId)
 					end
 				end)
 
@@ -1222,6 +1225,7 @@ function OrionLib:MakeWindow(WindowConfig)
 
 						AddConnection(OptionBtn.MouseButton1Click, function()
 							Dropdown:Set(Option)
+							SaveCfg(game.GameId)
 						end)
 
 						Dropdown.Buttons[Option] = OptionBtn
@@ -1389,6 +1393,7 @@ function OrionLib:MakeWindow(WindowConfig)
 						end)
 						Key = Key or Bind.Value
 						Bind:Set(Key)
+						SaveCfg(game.GameId)
 					end
 				end)
 
@@ -1625,6 +1630,7 @@ function OrionLib:MakeWindow(WindowConfig)
 					Color.BackgroundColor3 = Color3.fromHSV(ColorH, 1, 1)
 					Colorpicker:Set(ColorpickerBox.BackgroundColor3)
 					ColorpickerConfig.Callback(ColorpickerBox.BackgroundColor3)
+					SaveCfg(game.GameId)
 				end
 
 				ColorH = 1 - (math.clamp(HueSelection.AbsolutePosition.Y - Hue.AbsolutePosition.Y, 0, Hue.AbsoluteSize.Y) / Hue.AbsoluteSize.Y)
