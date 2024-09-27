@@ -66,7 +66,7 @@ if syn then
 	isSyn = true
 	Orion.Parent = CoreGui
 else
-	Orion.Parent = gethui() or CoreGui
+	Orion.Parent = gethui and gethui() or CoreGui
 end
 
 if gethui then
