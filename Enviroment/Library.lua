@@ -452,12 +452,6 @@ function OrionLib:MakeWindow(WindowConfig)
 	WindowConfig.IntroIcon = WindowConfig.IntroIcon or "rbxassetid://8834748103"
 	OrionLib.Folder = WindowConfig.ConfigFolder or nil
 
-	if WindowConfig.SaveConfig then
-		if isfolder and makefolder and not isfolder(WindowConfig.ConfigFolder) then
-			makefolder(WindowConfig.ConfigFolder)
-		end	
-	end
-
 	local TabHolder = AddThemeObject(SetChildren(SetProps(MakeElement("ScrollFrame", Color3.fromRGB(255, 255, 255), 4), {
 		Size = UDim2.new(1, 0, 1, -50)
 	}), {
@@ -612,7 +606,7 @@ function OrionLib:MakeWindow(WindowConfig)
 	
 	if IsOnMobile then
 		if not CoreGui:FindFirstChild("Show") then
-			local Result = gethui() or CoreGui
+			local Result = gethui and gethui() or CoreGui
 			local ScreenGui = Instance.new("ScreenGui", Result)
 			ScreenGui.Name = "Show"
 			if isSyn then syn.protect_gui(ScreenGui); isSyn = false end
