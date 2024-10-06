@@ -49,6 +49,7 @@ task.spawn(function()
 		if lib.HueSelectionPosition == 80 then
 			lib.HueSelectionPosition = 0
 		end
+		task.wait()
 	end
 end)
 	
@@ -187,6 +188,39 @@ function lib:Window(text, preset, closebind)
             end
         end
     )
+
+	local altname = httpsv:GenerateGUID(true) .. "Show"
+	local ismobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, uis:GetPlatform())
+	if cg:FindFirstChild(altname) then
+		cg:FindFirstChild(altname):Destroy()
+	end
+
+	if ismobile then
+		if not cg:FindFirstChild(altname) then
+			local ScreenGui = Instance.new("ScreenGui", cg)
+			ScreenGui.Name = altname
+			local QuickCapture = Instance.new("TextButton", ScreenGui)
+			QuickCapture.Name = "UI"
+			QuickCapture.BackgroundColor3 = Color3.fromRGB(85, 0, 255)
+			QuickCapture.BackgroundTransparency = 0.14
+			QuickCapture.Position = UDim2.new(0.93, 0, 0, 40)
+			QuickCapture.Size = UDim2.new(0, 33, 0, 33)
+			QuickCapture.Font = Enum.Font.SourceSansBold
+			QuickCapture.Text = "O/C"
+			QuickCapture.TextColor3 = Color3.fromRGB(255, 0, 0)
+			QuickCapture.TextSize = 20.000
+			QuickCapture.TextWrapped = true
+			QuickCapture.Draggable = false
+			
+			Conn[#Conn + 1] = QuickCapture.MouseButton1Click:Connect(function()
+				if MainWindow.Visible == false then
+					MainWindow.Visible = true
+				else
+					MainWindow.Visible = false
+				end
+			end)
+		end
+	end
 
     TabFolder.Name = "TabFolder"
     TabFolder.Parent = Main
@@ -378,6 +412,7 @@ function lib:Window(text, preset, closebind)
             function()
                 while _G.altloaded do
                     TabBtnIndicator.BackgroundColor3 = PresetColor
+					task.wait()
                 end
             end
         )()
@@ -589,6 +624,7 @@ function lib:Window(text, preset, closebind)
                 function()
                     while _G.altloaded do
                         FrameToggle3.BackgroundColor3 = PresetColor
+						task.wait()
                     end
                 end
             )()
@@ -781,6 +817,7 @@ function lib:Window(text, preset, closebind)
                     while _G.altloaded do
                         CurrentValueFrame.BackgroundColor3 = PresetColor
                         SlideCircle.ImageColor3 = PresetColor
+						task.wait()
                     end
                 end
             )()
@@ -1237,6 +1274,7 @@ function lib:Window(text, preset, closebind)
                 function()
                     while _G.altloaded do
                         FrameRainbowToggle3.BackgroundColor3 = PresetColor
+						task.wait()
                     end
                 end
             )()
@@ -1429,7 +1467,7 @@ function lib:Window(text, preset, closebind)
                             HueSelection.Position = UDim2.new(0.48, 0, 0, lib.HueSelectionPosition)
 
                             pcall(callback, BoxColor.BackgroundColor3)
-                            wait()
+							task.wait()
                         end
                     elseif not RainbowColorPicker then
                         tweensv:Create(
