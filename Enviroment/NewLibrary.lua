@@ -9,11 +9,10 @@ local lp = plrs.LocalPlayer
 local ms = lp:GetMouse()
 local ws = cloneref(game:GetService("Workspace"))
 local cam = ws.CurrentCamera
-local cg = cloneref(game:GetService("CoreGui"))
+local cg = game:GetService("CoreGui")
 local httpsv = cloneref(game:GetService("HttpService"))
-local PresetColor, Drawing, placeid = Color3.fromRGB(1, 1, 1), Drawing or {}, game.PlaceId
+local PresetColor, Drawing, placeid = Color3.fromRGB(255, 0, 0), Drawing or {}, game.PlaceId
 local CloseBind, syn, getgenv = Enum.KeyCode.RightControl, syn or {}, getgenv or {}
-_G.altloaded = false
 
 if _G.altloaded  then
 	for i,v in next, lib.Conn do
@@ -22,20 +21,16 @@ if _G.altloaded  then
 	_G.altloaded = false
 end
 
-local nameprotection = httpsv:GenerateGUID(true) .. placeid
+_G.altloaded = true
 
-if cg:FindFirstChild(nameprotection) then
-	cg:FindFirstChild(nameprotection):Destroy()
-end
+local nameprotection = httpsv:GenerateGUID(true) .. " " .. placeid
+local rbxgui = cg:FindFirstChild("RobloxGui") or Instance.new("ScreenGui", cg)
 
-local screengui = Instance.new("ScreenGui", cg)
+local screengui = Instance.new("ScreenGui", rbxgui)
 screengui.Name = nameprotection
-screengui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 if type(syn) == "function" then
 	syn.protect_gui(screengui)
 end
-
-_G.altloaded = true
 
 task.spawn(function()
 	while _G.altloaded do
@@ -52,7 +47,35 @@ task.spawn(function()
 		task.wait()
 	end
 end)
-	
+
+local function animateText(display, text, repeatCount, delay)
+    if not display then return end
+    local animatedRandom = "1234567890"
+    for i = 1, #text do
+        local revealChar = text:sub(i, i)
+        local displayText = text:sub(1, i - 1)
+
+        for _ = 1, math.random(1, 6) do
+            local random = math.random(1, #animatedRandom)
+            local randomChar = animatedRandom:sub(random, random)
+            display.TextColor3 = PresetColor
+            display.Text = displayText .. randomChar
+            task.wait(delay)
+        end
+        display.Text = displayText .. revealChar
+        task.wait(delay)
+    end
+end
+
+function lib:Unload()
+    if screengui then
+        screengui:Destroy()
+    end
+    for i,v in next, lib.Conn do
+		v:Disconnect()
+	end
+    _G.altloaded = false
+end
 
 local function MakeDraggable(topbarobject, object)
     local Dragging = nil
@@ -72,45 +95,34 @@ local function MakeDraggable(topbarobject, object)
         object.Position = pos
     end
 
-    Conn[#Conn + 1] = topbarobject.InputBegan:Connect(
-        function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                Dragging = true
-                DragStart = input.Position
-                StartPosition = object.Position
+    lib.Conn[#lib.Conn + 1] = topbarobject.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            Dragging = true
+            DragStart = input.Position
+            StartPosition = object.Position
 
-                Conn[#Conn + 1] = input.Changed:Connect(
-                    function()
-                        if input.UserInputState == Enum.UserInputState.End then
-                            Dragging = false
-                        end
-                    end
-                )
-            end
+            lib.Conn[#lib.Conn + 1] = input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    Dragging = false
+                end
+            end)
         end
-    )
+    end)
 
-    Conn[#Conn + 1] = topbarobject.InputChanged:Connect(
-        function(input)
-            if
-                input.UserInputType == Enum.UserInputType.MouseMovement or
-                    input.UserInputType == Enum.UserInputType.Touch
-             then
-                DragInput = input
-            end
+    lib.Conn[#lib.Conn + 1] = topbarobject.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            DragInput = input
         end
-    )
+    end)
 
-    Conn[#Conn + 1] = uis.InputChanged:Connect(
-        function(input)
-            if input == DragInput and Dragging then
-                Update(input)
-            end
+    lib.Conn[#lib.Conn + 1] = uis.InputChanged:Connect(function(input)
+        if input == DragInput and Dragging then
+            Update(input)
         end
-    )
+    end)
 end
 
-function lib:Window(text, preset, closebind)
+function lib:Window(title, preset, closebind)
     CloseBind = closebind or Enum.KeyCode.RightControl
     PresetColor = preset or Color3.fromRGB(44, 120, 224)
     fs = false
@@ -122,9 +134,9 @@ function lib:Window(text, preset, closebind)
     local DragFrame = Instance.new("Frame")
 
     Main.Name = "Main"
-    Main.Parent = ui
+    Main.Parent = screengui
     Main.AnchorPoint = Vector2.new(0.5, 0.5)
-    Main.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    Main.BackgroundColor3 = Color3.fromRGB(1, 1, 1)
     Main.BorderSizePixel = 0
     Main.Position = UDim2.new(0.5, 0, 0.5, 0)
     Main.Size = UDim2.new(0, 0, 0, 0)
@@ -147,12 +159,30 @@ function lib:Window(text, preset, closebind)
     Title.Parent = Main
     Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     Title.BackgroundTransparency = 1.000
-    Title.Position = UDim2.new(0.0339285731, 0, 0.0564263314, 0)
+    Title.Position = UDim2.new(0.0339285731, 0, 0.0274263314, 0)
     Title.Size = UDim2.new(0, 200, 0, 23)
     Title.Font = Enum.Font.GothamSemibold
-    Title.Text = text
-    Title.TextColor3 = Color3.fromRGB(68, 68, 68)
-    Title.TextSize = 12.000
+    Title.Text = title or "Unknown Title"
+
+    local textDisplays = {
+        title,
+        "Script On TOP!",
+        "Definitive Script",
+        "By Nightmare"
+    }
+
+    coroutine.wrap(function()
+        while _G.altloaded do
+            local repeatCount = 10
+            local delay = 0.05
+            for _, v in ipairs(textDisplays) do
+                animateText(Title, v, repeatCount, delay)
+            end
+            task.wait(5)
+        end
+    end)()
+
+    Title.TextSize = 20
     Title.TextXAlignment = Enum.TextXAlignment.Left
 
     DragFrame.Name = "DragFrame"
@@ -166,30 +196,22 @@ function lib:Window(text, preset, closebind)
     MakeDraggable(DragFrame, Main)
 
     local uitoggled = false
-    Conn[#Conn + 1] = uis.InputBegan:Connect(
-        function(io, p)
-            if io.KeyCode == CloseBind then
-                if uitoggled == false then
-                    Main:TweenSize(UDim2.new(0, 0, 0, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, .6, true)
-                    uitoggled = true
-                    wait(.5)
-                    knixhub.Enabled = false
-                else
-                    Main:TweenSize(
-                        UDim2.new(0, 560, 0, 319),
-                        Enum.EasingDirection.Out,
-                        Enum.EasingStyle.Quart,
-                        .6,
-                        true
-                    )
-                    knixhub.Enabled = true
-                    uitoggled = false
-                end
+    lib.Conn[#lib.Conn + 1] = uis.InputBegan:Connect(function(io, p)
+        if io.KeyCode == CloseBind then
+            if uitoggled == false then
+                Main:TweenSize(UDim2.new(0, 0, 0, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, .6, true)
+                uitoggled = true
+                wait(.5)
+                knixhub.Enabled = false
+            else
+                Main:TweenSize(UDim2.new(0, 560, 0, 319),Enum.EasingDirection.Out,Enum.EasingStyle.Quart, .6,true)
+                knixhub.Enabled = true
+                uitoggled = false
             end
         end
-    )
+    end)
 
-	local altname = httpsv:GenerateGUID(true) .. "Show"
+	local altname = "Show"
 	local ismobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, uis:GetPlatform())
 	if cg:FindFirstChild(altname) then
 		cg:FindFirstChild(altname):Destroy()
@@ -212,11 +234,11 @@ function lib:Window(text, preset, closebind)
 			QuickCapture.TextWrapped = true
 			QuickCapture.Draggable = false
 			
-			Conn[#Conn + 1] = QuickCapture.MouseButton1Click:Connect(function()
-				if MainWindow.Visible == false then
-					MainWindow.Visible = true
+			lib.Conn[#lib.Conn + 1] = QuickCapture.MouseButton1Click:Connect(function()
+				if Main.Visible == false then
+					Main.Visible = true
 				else
-					MainWindow.Visible = false
+					Main.Visible = false
 				end
 			end)
 		end
@@ -250,11 +272,6 @@ function lib:Window(text, preset, closebind)
         NotificationHold.TextColor3 = Color3.fromRGB(0, 0, 0)
         NotificationHold.TextSize = 14.000
 
-        tweensv:Create(
-            NotificationHold,
-            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundTransparency = 0.7}
-        ):Play()
         wait(0.4)
 
         NotificationFrame.Name = "NotificationFrame"
@@ -265,13 +282,7 @@ function lib:Window(text, preset, closebind)
         NotificationFrame.ClipsDescendants = true
         NotificationFrame.Position = UDim2.new(0.5, 0, 0.498432577, 0)
 
-        NotificationFrame:TweenSize(
-            UDim2.new(0, 164, 0, 193),
-            Enum.EasingDirection.Out,
-            Enum.EasingStyle.Quart,
-            .6,
-            true
-        )
+        NotificationFrame:TweenSize(UDim2.new(0, 164, 0, 193),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,.6,true)
 
         OkayBtn.Name = "OkayBtn"
         OkayBtn.Parent = NotificationFrame
@@ -326,49 +337,12 @@ function lib:Window(text, preset, closebind)
         NotificationDesc.TextXAlignment = Enum.TextXAlignment.Left
         NotificationDesc.TextYAlignment = Enum.TextYAlignment.Top
 
-        Conn[#Conn + 1] = OkayBtn.MouseEnter:Connect(
-            function()
-                tweensv:Create(
-                    OkayBtn,
-                    TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                    {BackgroundColor3 = Color3.fromRGB(37, 37, 37)}
-                ):Play()
-            end
-        )
 
-        Conn[#Conn + 1] = OkayBtn.MouseLeave:Connect(
-            function()
-                tweensv:Create(
-                    OkayBtn,
-                    TweenInfo.new(.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                    {BackgroundColor3 = Color3.fromRGB(34, 34, 34)}
-                ):Play()
-            end
-        )
-
-        Conn[#Conn + 1] = OkayBtn.MouseButton1Click:Connect(
-            function()
-                NotificationFrame:TweenSize(
-                    UDim2.new(0, 0, 0, 0),
-                    Enum.EasingDirection.Out,
-                    Enum.EasingStyle.Quart,
-                    .6,
-                    true
-                )
-
-                wait(0.4)
-
-                tweensv:Create(
-                    NotificationHold,
-                    TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                    {BackgroundTransparency = 1}
-                ):Play()
-
-                wait(.3)
-
-                NotificationHold:Destroy()
-            end
-        )
+        lib.Conn[#lib.Conn + 1] = OkayBtn.MouseButton1Click:Connect(function()
+            NotificationFrame:TweenSize(UDim2.new(0, 0, 0, 0),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,.6,true)
+            wait(.4)
+            NotificationHold:Destroy()
+        end)
     end
     local tabhold = {}
     function tabhold:Tab(text)
@@ -394,7 +368,7 @@ function lib:Window(text, preset, closebind)
         TabTitle.Size = UDim2.new(0, 107, 0, 21)
         TabTitle.Font = Enum.Font.Gotham
         TabTitle.Text = text
-        TabTitle.TextColor3 = Color3.fromRGB(150, 150, 150)
+        TabTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
         TabTitle.TextSize = 14.000
         TabTitle.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -408,14 +382,12 @@ function lib:Window(text, preset, closebind)
         TabBtnIndicatorCorner.Name = "TabBtnIndicatorCorner"
         TabBtnIndicatorCorner.Parent = TabBtnIndicator
 
-        coroutine.wrap(
-            function()
-                while _G.altloaded do
-                    TabBtnIndicator.BackgroundColor3 = PresetColor
-					task.wait()
-                end
+        coroutine.wrap(function()
+            while _G.altloaded do
+                TabBtnIndicator.BackgroundColor3 = PresetColor
+				task.wait()
             end
-        )()
+        end)()
 
         local Tab = Instance.new("ScrollingFrame")
         local TabLayout = Instance.new("UIListLayout")
@@ -444,44 +416,20 @@ function lib:Window(text, preset, closebind)
             Tab.Visible = true
         end
 
-        Conn[#Conn + 1] = TabBtn.MouseButton1Click:Connect(
-            function()
-                for i, v in next, TabFolder:GetChildren() do
-                    if v.Name == "Tab" then
-                        v.Visible = false
-                    end
-                    Tab.Visible = true
+        lib.Conn[#lib.Conn + 1] = TabBtn.MouseButton1Click:Connect(function()
+            for i, v in next, TabFolder:GetChildren() do
+                if v.Name == "Tab" then
+                    v.Visible = false
                 end
-                for i, v in next, TabHold:GetChildren() do
-                    if v.Name == "TabBtn" then
-                        v.TabBtnIndicator:TweenSize(
-                            UDim2.new(0, 0, 0, 2),
-                            Enum.EasingDirection.Out,
-                            Enum.EasingStyle.Quart,
-                            .2,
-                            true
-                        )
-                        TabBtnIndicator:TweenSize(
-                            UDim2.new(0, 13, 0, 2),
-                            Enum.EasingDirection.Out,
-                            Enum.EasingStyle.Quart,
-                            .2,
-                            true
-                        )
-                        tweensv:Create(
-                            v.TabTitle,
-                            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                            {TextColor3 = Color3.fromRGB(150, 150, 150)}
-                        ):Play()
-                        tweensv:Create(
-                            TabTitle,
-                            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                            {TextColor3 = Color3.fromRGB(255, 255, 255)}
-                        ):Play()
-                    end
+                Tab.Visible = true
+            end
+            for i, v in next, TabHold:GetChildren() do
+                if v.Name == "TabBtn" then
+                    v.TabBtnIndicator:TweenSize(UDim2.new(0, 0, 0, 2),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,.2,true)
+                    TabBtnIndicator:TweenSize(UDim2.new(0, 13, 0, 2),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,.2,true)
                 end
             end
-        )
+        end)
         local tabcontent = {}
         function tabcontent:Button(text, callback)
             local Button = Instance.new("TextButton")
@@ -514,35 +462,13 @@ function lib:Window(text, preset, closebind)
             ButtonTitle.TextSize = 14.000
             ButtonTitle.TextXAlignment = Enum.TextXAlignment.Left
 
-            Conn[#Conn + 1] = Button.MouseEnter:Connect(
-                function()
-                    tweensv:Create(
-                        Button,
-                        TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                        {BackgroundColor3 = Color3.fromRGB(37, 37, 37)}
-                    ):Play()
-                end
-            )
-
-            Conn[#Conn + 1] = Button.MouseLeave:Connect(
-                function()
-                    tweensv:Create(
-                        Button,
-                        TweenInfo.new(.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                        {BackgroundColor3 = Color3.fromRGB(34, 34, 34)}
-                    ):Play()
-                end
-            )
-
-            Conn[#Conn + 1] = Button.MouseButton1Click:Connect(
-                function()
-                    pcall(callback)
-                end
-            )
+            lib.Conn[#lib.Conn + 1] = Button.MouseButton1Click:Connect(function()
+                pcall(callback)
+            end)
 
             Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y)
         end
-        function tabcontent:Toggle(text,default, callback)
+        function tabcontent:Toggle(text,default,callback)
             local toggled = false
 
             local Toggle = Instance.new("TextButton")
@@ -620,127 +546,74 @@ function lib:Window(text, preset, closebind)
             FrameToggleCircleCorner.Name = "FrameToggleCircleCorner"
             FrameToggleCircleCorner.Parent = FrameToggleCircle
 
-            coroutine.wrap(
-                function()
-                    while _G.altloaded do
-                        FrameToggle3.BackgroundColor3 = PresetColor
-						task.wait()
-                    end
+            coroutine.wrap(function()
+                while _G.altloaded do
+                    FrameToggle3.BackgroundColor3 = PresetColor
+					task.wait()
                 end
-            )()
+            end)()
 
-            Conn[#Conn + 1] = Toggle.MouseButton1Click:Connect(
-                function()
-                    if toggled == false then
-                        tweensv:Create(
-                            Toggle,
-                            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                            {BackgroundColor3 = Color3.fromRGB(37, 37, 37)}
-                        ):Play()
-                        tweensv:Create(
-                            FrameToggle1,
-                            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                            {BackgroundTransparency = 1}
-                        ):Play()
-                        tweensv:Create(
-                            FrameToggle2,
-                            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                            {BackgroundTransparency = 1}
-                        ):Play()
-                        tweensv:Create(
-                            FrameToggle3,
-                            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                            {BackgroundTransparency = 0}
-                        ):Play()
-                        tweensv:Create(
-                            FrameToggleCircle,
-                            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                            {BackgroundColor3 = Color3.fromRGB(255, 255, 255)}
-                        ):Play()
-                        FrameToggleCircle:TweenPosition(
-                            UDim2.new(0.587, 0, 0.222000003, 0),
-                            Enum.EasingDirection.Out,
-                            Enum.EasingStyle.Quart,
-                            .2,
-                            true
-                        )
-                    else
-                        tweensv:Create(
-                            Toggle,
-                            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                            {BackgroundColor3 = Color3.fromRGB(34, 34, 34)}
-                        ):Play()
-                        tweensv:Create(
-                            FrameToggle1,
-                            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                            {BackgroundTransparency = 0}
-                        ):Play()
-                        tweensv:Create(
-                            FrameToggle2,
-                            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                            {BackgroundTransparency = 0}
-                        ):Play()
-                        tweensv:Create(
-                            FrameToggle3,
-                            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                            {BackgroundTransparency = 1}
-                        ):Play()
-                        tweensv:Create(
-                            FrameToggleCircle,
-                            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                            {BackgroundColor3 = Color3.fromRGB(50, 50, 50)}
-                        ):Play()
-                        FrameToggleCircle:TweenPosition(
-                            UDim2.new(0.127000004, 0, 0.222000003, 0),
-                            Enum.EasingDirection.Out,
-                            Enum.EasingStyle.Quart,
-                            .2,
-                            true
-                        )
-                    end
-                    toggled = not toggled
-                    pcall(callback, toggled)
+            local toggle = {}
+
+            function toggle:set(state)
+                if state == false then
+                    tweensv:Create(Toggle,TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),{BackgroundColor3 = Color3.fromRGB(37, 37, 37)}):Play()
+                    tweensv:Create(FrameToggle1,TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),{BackgroundTransparency = 1}):Play()
+                    tweensv:Create(FrameToggle2,TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),{BackgroundTransparency = 1}):Play()
+                    tweensv:Create(FrameToggle3,TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),{BackgroundTransparency = 0}):Play()
+                    tweensv:Create(FrameToggleCircle,TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),{BackgroundColor3 = Color3.fromRGB(255, 255, 255)}):Play()
+                    FrameToggleCircle:TweenPosition(UDim2.new(0.587, 0, 0.222000003, 0),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,.2,true)
+                else
+                    tweensv:Create(Toggle,TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),{BackgroundColor3 = Color3.fromRGB(37, 37, 37)}):Play()
+                    tweensv:Create(FrameToggle1,TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),{BackgroundTransparency = 1}):Play()
+                    tweensv:Create(FrameToggle2,TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),{BackgroundTransparency = 1}):Play()
+                    tweensv:Create(FrameToggle3,TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),{BackgroundTransparency = 0}):Play()
+                    tweensv:Create(FrameToggleCircle,TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),{BackgroundColor3 = Color3.fromRGB(255, 255, 255)}):Play()
+                    FrameToggleCircle:TweenPosition(UDim2.new(0.587, 0, 0.222000003, 0),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,.2,true)
                 end
-            )
+                toggled = state
+            end
+
+            lib.Conn[#lib.Conn + 1] = Toggle.MouseButton1Click:Connect(function()
+                if toggled == false then
+                    tweensv:Create(Toggle,TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),{BackgroundColor3 = Color3.fromRGB(37, 37, 37)}):Play()
+                    tweensv:Create(FrameToggle1,TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),{BackgroundTransparency = 1}):Play()
+                    tweensv:Create(FrameToggle2,TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),{BackgroundTransparency = 1}):Play()
+                    tweensv:Create(FrameToggle3,TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),{BackgroundTransparency = 0}):Play()
+                    tweensv:Create(FrameToggleCircle,TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),{BackgroundColor3 = Color3.fromRGB(255, 255, 255)}):Play()
+                    FrameToggleCircle:TweenPosition(UDim2.new(0.587, 0, 0.222000003, 0),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,.2,true)
+                else
+                    tweensv:Create(Toggle,TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),{BackgroundColor3 = Color3.fromRGB(34, 34, 34)}):Play()
+                    tweensv:Create(FrameToggle1,TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),{BackgroundTransparency = 0}):Play()
+                    tweensv:Create(FrameToggle2,TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),{BackgroundTransparency = 0}):Play()
+                    tweensv:Create(FrameToggle3,TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),{BackgroundTransparency = 1}):Play()
+                    tweensv:Create(FrameToggleCircle,TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),{BackgroundColor3 = Color3.fromRGB(50, 50, 50)}):Play()
+                    FrameToggleCircle:TweenPosition(UDim2.new(0.127000004, 0, 0.222000003, 0),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,.2,true)
+                end
+                toggled = not toggled
+                pcall(callback, toggled)
+            end)
 
             if default == true then
-                tweensv:Create(
-                    Toggle,
-                    TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                    {BackgroundColor3 = Color3.fromRGB(37, 37, 37)}
-                ):Play()
-                tweensv:Create(
-                    FrameToggle1,
-                    TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                    {BackgroundTransparency = 1}
-                ):Play()
-                tweensv:Create(
-                    FrameToggle2,
-                    TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                    {BackgroundTransparency = 1}
-                ):Play()
-                tweensv:Create(
-                    FrameToggle3,
-                    TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                    {BackgroundTransparency = 0}
-                ):Play()
-                tweensv:Create(
-                    FrameToggleCircle,
-                    TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                    {BackgroundColor3 = Color3.fromRGB(255, 255, 255)}
-                ):Play()
-                FrameToggleCircle:TweenPosition(
-                    UDim2.new(0.587, 0, 0.222000003, 0),
-                    Enum.EasingDirection.Out,
-                    Enum.EasingStyle.Quart,
-                    .2,
-                    true
-                )
+                tweensv:Create(Toggle,TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),{BackgroundColor3 = Color3.fromRGB(37, 37, 37)}):Play()
+                tweensv:Create(FrameToggle1,TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),{BackgroundTransparency = 1}):Play()
+                tweensv:Create(FrameToggle2,TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),{BackgroundTransparency = 1}):Play()
+                tweensv:Create(FrameToggle3,TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),{BackgroundTransparency = 0}):Play()
+                tweensv:Create(FrameToggleCircle,TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),{BackgroundColor3 = Color3.fromRGB(255, 255, 255)}):Play()
+                FrameToggleCircle:TweenPosition(UDim2.new(0.587, 0, 0.222000003, 0),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,.2,true)
                 toggled = not toggled
             end
 
             Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y)
+            return toggle
         end
+
+        local function Round(Number, Factor)
+            local Result = math.floor(Number/Factor + (math.sign(Number) * 0.5)) * Factor
+            if Result < 0 then Result = Result + Factor end
+            return Result
+        end
+
         function tabcontent:Slider(text, min, max, start, callback)
             local dragging = false
             local Slider = Instance.new("TextButton")
@@ -812,64 +685,49 @@ function lib:Window(text, preset, closebind)
             SlideCircle.Image = "rbxassetid://3570695787"
             SlideCircle.ImageColor3 = PresetColor
 
-            coroutine.wrap(
-                function()
-                    while _G.altloaded do
-                        CurrentValueFrame.BackgroundColor3 = PresetColor
-                        SlideCircle.ImageColor3 = PresetColor
-						task.wait()
-                    end
+            coroutine.wrap(function()
+                while _G.altloaded do
+                    CurrentValueFrame.BackgroundColor3 = PresetColor
+                    SlideCircle.ImageColor3 = PresetColor
+					task.wait()
                 end
-            )()
+            end)()
 
             local function move(input)
-                local pos =
-                    UDim2.new(
-                    math.clamp((input.Position.X - SlideFrame.AbsolutePosition.X) / SlideFrame.AbsoluteSize.X, 0, 1),
-                    -6,
-                    -1.30499995,
-                    0
-                )
-                local pos1 =
-                    UDim2.new(
-                    math.clamp((input.Position.X - SlideFrame.AbsolutePosition.X) / SlideFrame.AbsoluteSize.X, 0, 1),
-                    0,
-                    0,
-                    3
-                )
+                local pos = UDim2.new(math.clamp((input.Position.X - SlideFrame.AbsolutePosition.X) / SlideFrame.AbsoluteSize.X, 0, 1),
+                -6,-1.30499995,0)
+                local pos1 = UDim2.new(math.clamp((input.Position.X - SlideFrame.AbsolutePosition.X) / SlideFrame.AbsoluteSize.X, 0, 1),
+                0,0,3)
                 CurrentValueFrame:TweenSize(pos1, "Out", "Sine", 0.1, true)
                 SlideCircle:TweenPosition(pos, "Out", "Sine", 0.1, true)
                 local value = math.floor(((pos.X.Scale * max) / max) * (max - min) + min)
                 SliderValue.Text = tostring(value)
                 pcall(callback, value)
             end
-            Conn[#Conn + 1] = SlideCircle.InputBegan:Connect(
-                function(input)
-                    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                        dragging = true
-                    end
+            lib.Conn[#lib.Conn + 1] = SlideCircle.InputBegan:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                    dragging = true
                 end
-            )
-            Conn[#Conn + 1] = SlideCircle.InputEnded:Connect(
-                function(input)
-                    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                        dragging = false
-                    end
+            end)
+
+            lib.Conn[#lib.Conn + 1] = SlideCircle.InputEnded:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                    dragging = false
                 end
-            )
-            Conn[#Conn + 1] = uis.InputChanged:Connect(
-                function(input)
-                    if dragging or input.UserInputType == Enum.UserInputType.MouseMovement then
-                        move(input)
-                    end
+            end)
+
+            lib.Conn[#lib.Conn + 1] = uis.InputChanged:Connect(function(input)
+                if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or Input.UserInputType == Enum.UserInputType.Touch) then
+                    move(input)
                 end
-            )
+            end)
             Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y)
         end
-        function tabcontent:Dropdown(text, list, callback)
+        function tabcontent:Dropdown(text, multi, list, callback)
             local droptog = false
             local framesize = 0
             local itemcount = 0
+            local ismulti = multi
 
             local Dropdown = Instance.new("Frame")
             local DropdownCorner = Instance.new("UICorner")
@@ -935,42 +793,18 @@ function lib:Window(text, preset, closebind)
             DropLayout.Parent = DropItemHolder
             DropLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
-            Conn[#Conn + 1] = DropdownBtn.MouseButton1Click:Connect(
-                function()
-                    if droptog == false then
-                        Dropdown:TweenSize(
-                            UDim2.new(0, 363, 0, 55 + framesize),
-                            Enum.EasingDirection.Out,
-                            Enum.EasingStyle.Quart,
-                            .2,
-                            true
-                        )
-                        tweensv:Create(
-                            ArrowImg,
-                            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                            {Rotation = 270}
-                        ):Play()
-                        wait(.2)
-                        Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y)
-                    else
-                        Dropdown:TweenSize(
-                            UDim2.new(0, 363, 0, 42),
-                            Enum.EasingDirection.Out,
-                            Enum.EasingStyle.Quart,
-                            .2,
-                            true
-                        )
-                        tweensv:Create(
-                            ArrowImg,
-                            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                            {Rotation = 0}
-                        ):Play()
-                        wait(.2)
-                        Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y)
-                    end
-                    droptog = not droptog
+            lib.Conn[#lib.Conn + 1] = DropdownBtn.MouseButton1Click:Connect(function()
+                if droptog == false then
+                    Dropdown:TweenSize(UDim2.new(0, 363, 0, 55 + framesize),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,.2,true)
+                    Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y)
+                else
+                    Dropdown:TweenSize(UDim2.new(0, 363, 0, 42),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,.2,true)
+                    Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y)
                 end
-            )
+                droptog = not droptog
+            end)
+
+            local selectedItems = {}
 
             for i, v in next, list do
                 itemcount = itemcount + 1
@@ -996,48 +830,31 @@ function lib:Window(text, preset, closebind)
                 ItemCorner.Name = "ItemCorner"
                 ItemCorner.Parent = Item
 
-                Conn[#Conn + 1] = Item.MouseEnter:Connect(
-                    function()
-                        tweensv:Create(
-                            Item,
-                            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                            {BackgroundColor3 = Color3.fromRGB(37, 37, 37)}
-                        ):Play()
-                    end
-                )
-
-                Conn[#Conn + 1] = Item.MouseLeave:Connect(
-                    function()
-                        tweensv:Create(
-                            Item,
-                            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                            {BackgroundColor3 = Color3.fromRGB(34, 34, 34)}
-                        ):Play()
-                    end
-                )
-
-                Conn[#Conn + 1] = Item.MouseButton1Click:Connect(
-                    function()
+                lib.Conn[#lib.Conn + 1] = Item.MouseButton1Click:Connect(function()
+                    if ismulti then
+                        if selectedItems[v] then
+                            selectedItems[v] = nil
+                            Item.BackgroundColor3 = Color3.fromRGB(34, 34, 34)
+                        else
+                            selectedItems[v] = true
+                            Item.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+                        end
+                        local selectedText = ""
+                        for selectedItem in pairs(selectedItems) do
+                            selectedText = selectedText .. selectedItem .. ", "
+                        end
+                        selectedText = selectedText:sub(1, -3)
+                        
+                        DropdownTitle.Text = text .. " - " .. selectedText
+                        pcall(callback, selectedItems)
+                    else
                         droptog = not droptog
                         DropdownTitle.Text = text .. " - " .. v
                         pcall(callback, v)
-                        Dropdown:TweenSize(
-                            UDim2.new(0, 363, 0, 42),
-                            Enum.EasingDirection.Out,
-                            Enum.EasingStyle.Quart,
-                            .2,
-                            true
-                        )
-                        tweensv:Create(
-                            ArrowImg,
-                            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                            {Rotation = 0}
-                        ):Play()
-                        wait(.2)
+                        Dropdown:TweenSize(UDim2.new(0, 363, 0, 42),Enum.EasingDirection.Out,Enum.EasingStyle.Quart,.2,true)
                         Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y)
                     end
-                )
-
+                end)
                 DropItemHolder.CanvasSize = UDim2.new(0, 0, 0, DropLayout.AbsoluteContentSize.Y)
             end
             Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y)
@@ -1270,16 +1087,13 @@ function lib:Window(text, preset, closebind)
             HueSelection.Image = "http://www.roblox.com/asset/?id=4805639000"
             HueSelection.Visible = false
 
-            coroutine.wrap(
-                function()
-                    while _G.altloaded do
-                        FrameRainbowToggle3.BackgroundColor3 = PresetColor
-						task.wait()
-                    end
+            coroutine.wrap(function()
+                while _G.altloaded do
+                    FrameRainbowToggle3.BackgroundColor3 = PresetColor
+					task.wait()
                 end
-            )()
-
-            Conn[#Conn + 1] = ColorpickerBtn.MouseButton1Click:Connect(
+            end)()
+            lib.Conn[#lib.Conn + 1] = ColorpickerBtn.MouseButton1Click:Connect(
                 function()
                     if ColorPickerToggled == false then
                         ColorSelection.Visible = true
@@ -1333,7 +1147,7 @@ function lib:Window(text, preset, closebind)
             Color.BackgroundColor3 = preset
             pcall(callback, BoxColor.BackgroundColor3)
 
-            Conn[#Conn + 1] = Color.InputBegan:Connect(
+            lib.Conn[#lib.Conn + 1] = Color.InputBegan:Connect(
                 function(input)
                     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                         if RainbowColorPicker then
@@ -1365,7 +1179,7 @@ function lib:Window(text, preset, closebind)
                 end
             )
 
-            Conn[#Conn + 1] = Color.InputEnded:Connect(
+            lib.Conn[#lib.Conn + 1] = Color.InputEnded:Connect(
                 function(input)
                     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                         if ColorInput then
@@ -1375,7 +1189,7 @@ function lib:Window(text, preset, closebind)
                 end
             )
 
-            Conn[#Conn + 1] = Hue.InputBegan:Connect(
+            lib.Conn[#lib.Conn + 1] = Hue.InputBegan:Connect(
                 function(input)
                     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                         if RainbowColorPicker then
@@ -1403,7 +1217,7 @@ function lib:Window(text, preset, closebind)
                 end
             )
 
-            Conn[#Conn + 1] = Hue.InputEnded:Connect(
+            lib.Conn[#lib.Conn + 1] = Hue.InputEnded:Connect(
                 function(input)
                     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                         if HueInput then
@@ -1509,7 +1323,7 @@ function lib:Window(text, preset, closebind)
                 end
             )
 
-            Conn[#Conn + 1] = ConfirmBtn.MouseButton1Click:Connect(
+            lib.Conn[#lib.Conn + 1] = ConfirmBtn.MouseButton1Click:Connect(
                 function()
                     ColorSelection.Visible = false
                     HueSelection.Visible = false
@@ -1609,7 +1423,7 @@ function lib:Window(text, preset, closebind)
             TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
             TextBox.TextSize = 14.000
 
-            Conn[#Conn + 1] = TextBox.FocusLost:Connect(
+            lib.Conn[#lib.Conn + 1] = TextBox.FocusLost:Connect(
                 function(ep)
                     if ep then
                         if #TextBox.Text > 0 then
@@ -1671,30 +1485,26 @@ function lib:Window(text, preset, closebind)
 
             Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y)
 
-            Conn[#Conn + 1] = Bind.MouseButton1Click:Connect(
-                function()
-                    BindText.Text = "..."
-                    binding = true
-                    local inputwait = uis.InputBegan:wait()
-                    if inputwait.KeyCode.Name ~= "Unknown" then
-                        BindText.Text = inputwait.KeyCode.Name
-                        Key = inputwait.KeyCode.Name
-                        binding = false
-                    else
-                        binding = false
-                    end
+            lib.Conn[#lib.Conn + 1] = Bind.MouseButton1Click:Connect(function()
+                BindText.Text = "..."
+                binding = true
+                local inputwait = uis.InputBegan:wait()
+                if inputwait.KeyCode.Name ~= "Unknown" then
+                    BindText.Text = inputwait.KeyCode.Name
+                    Key = inputwait.KeyCode.Name
+                    binding = false
+                else
+                    binding = false
                 end
-            )
+            end)
 
-            Conn[#Conn + 1] = uis.InputBegan:connect(
-                function(current, pressed)
-                    if not pressed then
-                        if current.KeyCode.Name == Key and binding == false then
-                            pcall(callback)
-                        end
+            lib.Conn[#lib.Conn + 1] = uis.InputBegan:connect(function(current, pressed)
+                if not pressed then
+                    if current.KeyCode.Name == Key and binding == false then
+                        pcall(callback)
                     end
                 end
-            )
+            end)
         end
         return tabcontent
     end
