@@ -14,7 +14,14 @@ local httpsv = cloneref(game:GetService("HttpService"))
 local PresetColor, Drawing, placeid = Color3.fromRGB(255, 0, 0), Drawing or {}, game.PlaceId
 local CloseBind, syn, getgenv = Enum.KeyCode.RightControl, syn or {}, getgenv or {}
 
+local rbxgui = cg:FindFirstChild("RobloxGui") or Instance.new("ScreenGui", cg)
+
 if _G.altloaded  then
+    for i,v in next, rbxgui:GetChildren() do
+        if v.Name == "Horizon" then
+            v:Destroy()
+        end
+    end
 	for i,v in next, lib.Conn do
 		v:Disconnect()
 	end
@@ -23,11 +30,8 @@ end
 
 _G.altloaded = true
 
-local nameprotection = httpsv:GenerateGUID(true) .. " " .. placeid
-local rbxgui = cg:FindFirstChild("RobloxGui") or Instance.new("ScreenGui", cg)
-
 local screengui = Instance.new("ScreenGui", rbxgui)
-screengui.Name = nameprotection
+screengui.Name = "Horizon"
 if type(syn) == "function" then
 	syn.protect_gui(screengui)
 end
@@ -122,7 +126,7 @@ local function MakeDraggable(topbarobject, object)
     end)
 end
 
-function lib:Window(title, preset, closebind)
+function lib:Window(title, version, info, preset, closebind)
     CloseBind = closebind or Enum.KeyCode.RightControl
     PresetColor = preset or Color3.fromRGB(44, 120, 224)
     fs = false
@@ -166,15 +170,14 @@ function lib:Window(title, preset, closebind)
 
     local textDisplays = {
         title,
-        "Script On TOP!",
-        "Definitive Script",
-        "By Nightmare"
+        version,
+        info
     }
 
     coroutine.wrap(function()
         while _G.altloaded do
             local repeatCount = 10
-            local delay = 0.05
+            local delay = 1
             for _, v in ipairs(textDisplays) do
                 animateText(Title, v, repeatCount, delay)
             end
@@ -1423,18 +1426,16 @@ function lib:Window(title, preset, closebind)
             TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
             TextBox.TextSize = 14.000
 
-            lib.Conn[#lib.Conn + 1] = TextBox.FocusLost:Connect(
-                function(ep)
-                    if ep then
-                        if #TextBox.Text > 0 then
-                            pcall(callback, TextBox.Text)
-                            if disapper then
-                                TextBox.Text = ""
-                            end
+            lib.Conn[#lib.Conn + 1] = TextBox.FocusLost:Connect(function(ep)
+                if ep then
+                    if #TextBox.Text > 0 then
+                        pcall(callback, TextBox.Text)
+                        if disapper then
+                            TextBox.Text = ""
                         end
                     end
                 end
-            )
+            end)
             Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y)
         end
         function tabcontent:Bind(text, keypreset, callback)
