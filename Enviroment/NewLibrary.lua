@@ -126,9 +126,13 @@ local function MakeDraggable(topbarobject, object)
     end)
 end
 
+function lib:ChangeBind(key)
+	CloseBind = key
+end
+
 function lib:Window(title, version, info, preset, closebind)
     CloseBind = closebind or Enum.KeyCode.RightControl
-    PresetColor = preset or Color3.fromRGB(44, 120, 224)
+    PresetColor = preset or Color3.fromRGB(255, 0, 0)
     fs = false
     local Main = Instance.new("Frame")
     local TabHold = Instance.new("Frame")
@@ -136,6 +140,7 @@ function lib:Window(title, version, info, preset, closebind)
     local Title = Instance.new("TextLabel")
     local TabFolder = Instance.new("Folder")
     local DragFrame = Instance.new("Frame")
+	local close = Instance.new("ImageButton")
 
     Main.Name = "Main"
     Main.Parent = screengui
@@ -146,6 +151,24 @@ function lib:Window(title, version, info, preset, closebind)
     Main.Size = UDim2.new(0, 0, 0, 0)
     Main.ClipsDescendants = true
     Main.Visible = true
+
+	close.Name = "close"
+    close.Parent = Main
+    close.BackgroundTransparency = 1.000
+    close.Position = UDim2.new(0.94, 0, 0.01, 8)
+    close.Size = UDim2.new(0, 21, 0, 21)
+    close.ZIndex = 2
+    close.Image = "rbxassetid://3926305904"
+    close.ImageRectOffset = Vector2.new(284, 4)
+    close.ImageRectSize = Vector2.new(24, 24)
+    close.MouseButton1Click:Connect(function()
+        tweensv:Create(Main, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+			Size = UDim2.new(0,0,0,0),
+			Position = UDim2.new(0, Main.AbsolutePosition.X + (Main.AbsoluteSize.X / 2), 0, Main.AbsolutePosition.Y + (Main.AbsoluteSize.Y / 2))
+		}):Play()
+        wait(0.5)
+        screengui.Enabled = false
+    end)
 
     TabHold.Name = "TabHold"
     TabHold.Parent = Main
@@ -177,7 +200,7 @@ function lib:Window(title, version, info, preset, closebind)
     coroutine.wrap(function()
         while _G.altloaded do
             local repeatCount = 10
-            local delay = 1
+            local delay = 0.05
             for _, v in ipairs(textDisplays) do
                 animateText(Title, v, repeatCount, delay)
             end
@@ -204,12 +227,13 @@ function lib:Window(title, version, info, preset, closebind)
             if uitoggled == false then
                 Main:TweenSize(UDim2.new(0, 0, 0, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, .6, true)
                 uitoggled = true
-                wait(.5)
-                knixhub.Enabled = false
-            else
-                Main:TweenSize(UDim2.new(0, 560, 0, 319),Enum.EasingDirection.Out,Enum.EasingStyle.Quart, .6,true)
-                knixhub.Enabled = true
-                uitoggled = false
+                wait()
+                screengui.Enabled = false
+			elseif uitoggled == true then
+				uitoggled = false
+    			Main:TweenSize(UDim2.new(0, 560, 0, 319), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, .6, true)
+				wait()
+				screengui.Enabled = true
             end
         end
     end)
@@ -1502,7 +1526,7 @@ function lib:Window(title, version, info, preset, closebind)
             lib.Conn[#lib.Conn + 1] = uis.InputBegan:connect(function(current, pressed)
                 if not pressed then
                     if current.KeyCode.Name == Key and binding == false then
-                        pcall(callback)
+                        pcall(callback, Key)
                     end
                 end
             end)
